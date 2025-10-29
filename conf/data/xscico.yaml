@@ -1,0 +1,40 @@
+datamodule:
+  _target_: data.pl_data_modules.CrossDataModule
+  dataset:
+    train:
+      _target_: data.datasets.xcoreDataset
+      name: 'train'
+      type: "cross"
+      path: 'data/cross/scico/train_nosingletons.jsonl'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/train'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+      max_doc_len: 4500 
+    val:
+      _target_: data.datasets.xcoreDataset
+      name: 'val'
+      type: "cross"
+      path: 'data/cross/scico/validation_nosingletons.jsonl'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/val'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+    test:
+      _target_: data.datasets.xcoreDataset
+      name: 'test'
+      type: "cross"
+      path: 'data/cross/scico/test.jsonl' #test_nosingletons is broken
+      #path: '../../maverick-coref/dataa/scico/test.jsonl'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/test'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+
+  batch_sizes:
+    train: 1
+    val: 1
+    test: 1
+
+  num_workers:
+    train: 0
+    val: 0
+    test: 0
+

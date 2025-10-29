@@ -1,0 +1,40 @@
+datamodule:
+  _target_: data.pl_data_modules.CrossDataModule
+  dataset:
+    train:
+      _target_: data.datasets.xcoreDataset
+      name: 'train'
+      type: "book"
+      path: 'data/long/book/bookcoref/train/silver_train_simple_mes_hierarchical_splitted_1350_rateo.jsonlines'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/train'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+      max_doc_len: 1550
+    val:
+      _target_: data.datasets.xcoreDataset
+      name: 'val'
+      type: "book"
+      split: 4000
+      path: '../../bookcoref/benchmarks/full_test/full_test/full_test_final.jsonl'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/val'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+    test:
+      _target_: data.datasets.xcoreDataset
+      name: 'test'
+      type: "book"
+      split: 4000
+      path: '../../bookcoref/benchmarks/full_test/full_test/full_test_final.jsonl'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/test'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+
+  batch_sizes:
+    train: 1
+    val: 1
+    test: 1
+
+  num_workers:
+    train: 0
+    val: 0
+    test: 0

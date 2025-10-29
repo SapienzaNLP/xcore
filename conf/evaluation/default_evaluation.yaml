@@ -1,0 +1,5 @@
+# put args here
+checkpoint: "/root/refac/xcore/models/scico_best.ckpt"
+# checkpoint: "/root/refac/xcore/experiments/xcore/microsoft/deberta-v3-large/2025-10-23/08-43-46/wandb/run-20251023_084355-7m01yhu9/files/checkpoints/checkpoint-val_f1_0.7697-epoch_71.ckpt"
+singletons: False
+device: "cuda" #cpu 
