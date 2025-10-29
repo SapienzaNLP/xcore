@@ -192,11 +192,10 @@ conda activate xcore_env
 python xcore/train.py
 ```
 
-
 ## Evaluate
 To evaluate an existing model, it is necessary to set up two different environment variables.
-1. Set the dataset path in conf/root.yaml.
-2. Set the model checkpoint path in conf/evaluation/default_evaluation.yaml.
+1. Set the dataset path in `conf/root.yaml`.
+2. Set the model checkpoint path in `conf/evaluation/default_evaluation.yaml`.
 
 Finally, run the following:
 ```

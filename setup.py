@@ -22,5 +22,4 @@ setup(
     python_requires=">=3.8.0",
     author="Giuliano Martinelli, Bruno Gatti",
     author_email="giuliano.martinelli97@gmail.com",
-    zip_safe=False,
 )
