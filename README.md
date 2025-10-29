@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="https://github.com/SapienzaNLP/xcore/blob/master/media/xcore_logo.png" height="250">
+  <img src="https://github.com/SapienzaNLP/xcore/blob/master/media/xcore_logo.png" height="350">
 </div>
 <h1 align="center">
   All-in-one model for end-to-end Coreference Resolution
