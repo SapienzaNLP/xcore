@@ -13,3 +13,4 @@ sentencepiece==0.2.0
 spacy>=3.7
 transformers>=4.34
 wandb==0.20.1
+gdown

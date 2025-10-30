@@ -5,7 +5,7 @@ datamodule:
       _target_: xcore.data.datasets.xcoreDataset
       name: 'train'
       type: "book"
-      path: 'data/long/litbank/official/train-splitted.english.jsonlines'
+      path: 'data/LitBank/train-splitted.english.jsonlines'
       batch_size: "${data.datamodule.batch_sizes.train}"
       processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/train'
       tokenizer: "${model.module.model.huggingface_model_name}"
@@ -14,7 +14,7 @@ datamodule:
       _target_: xcore.data.datasets.xcoreDataset
       name: 'val'
       type: "book"
-      path: 'data/long/litbank/official/dev.english.jsonlines'
+      path: 'data/LitBank/dev.english.jsonlines'
       split: 1000
       batch_size: "${data.datamodule.batch_sizes.train}"
       processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/val'
@@ -24,7 +24,7 @@ datamodule:
       name: 'test'
       type: "book"
       split: 2
-      path: 'data/long/litbank/official/test.english.jsonlines'
+      path: 'data/LitBank/test.english.jsonlines'
       batch_size: "${data.datamodule.batch_sizes.train}"
       processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/test'
       tokenizer: "${model.module.model.huggingface_model_name}"

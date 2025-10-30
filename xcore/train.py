@@ -64,6 +64,7 @@ def train(conf: omegaconf.DictConfig) -> None:
     experiment_logger: Optional[WandbLogger] = None
     experiment_path: Optional[Path] = None
     if conf.logging.log:
+    #if False:
         console.log(f"Instantiating Wandb Logger")
         experiment_logger = hydra.utils.instantiate(conf.logging.wandb_arg)
         experiment_logger.watch(pl_module, **conf.logging.watch)

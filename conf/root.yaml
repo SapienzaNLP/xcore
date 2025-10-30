@@ -8,7 +8,7 @@ defaults:
   - _self_
   - train: default_train
   - model: cross/xdeberta-large_10000steps
-  - data: xscico
+  - data: xlitbank
   - evaluation: default_evaluation
   - logging: wandb_logging
   - override hydra/job_logging: colorlog
