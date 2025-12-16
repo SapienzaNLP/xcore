@@ -34,8 +34,8 @@ pip install -e .
 ## Loading a Pretrained Model
 xCoRe models can be loaded using huggingface_id or local path:
 ```bash
-from xcore-coref import xcore
-model = xcore(
+from xcore import xCoRe
+model = xCoRe(
   hf_name_or_path = "model_name" | "model_path", default = "sapienzanlp/xcore-litbank"
   device = "cpu" | "cuda", default = "cuda:0"
 )
