@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="xcore-coref",
-    version="0.1.2",
+    version="0.1.3",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/sapienzanlp/xcore",
@@ -11,7 +11,7 @@ setup(
         "pytorch-lightning>=1.8.0",
         "pandas>=1.3.5",
         "hydra-core>=1.2",
-        "transformers>=4.34",
+        "transformers==4.34",
         "spacy>=3.7.2",
         "jsonlines==4.0.0",
         "sentencepiece==0.2.0",
