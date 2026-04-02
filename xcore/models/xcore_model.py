@@ -14,10 +14,16 @@ class xCoRe:
     def __init__(self, hf_name_or_path="sapienzanlp/xcore-litbank", device="cuda"):
         self.device = device
         path = self.__get_model_path__(hf_name_or_path)
-        self.model = CrossPLModule.load_from_checkpoint(path, _recursive_=False, map_location=self.device)
+        _original_torch_load = torch.load
+        torch.load = lambda *args, **kwargs: _original_torch_load(*args, **{**kwargs, "weights_only": False})
+        try:
+            self.model = CrossPLModule.load_from_checkpoint(path, _recursive_=False, map_location=self.device)
+        finally:
+            torch.load = _original_torch_load
         # self.model = CrossPLModule.load_from_checkpoint(hf_name_or_path, _recursive_=False, map_location=device)
         self.model = self.model.eval()
         self.model = self.model.model
+        self.model = self.model.float()
         self.tokenizer = self.__get_model_tokenizer__()
 
     def __get_model_path__(self, hf_name_or_path):
