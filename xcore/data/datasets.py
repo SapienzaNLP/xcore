@@ -21,7 +21,7 @@ class xcoreDataset(Dataset):
         self.stage = name
         self.path = path
         self.batch_size = batch_size
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer, use_fast=True, add_prefix_space=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer, use_fast=False, add_prefix_space=True)
         self.max_doc_len = kwargs.get("max_doc_len", None)
         self.cross = kwargs.get("type", None) == "cross"
         self.book = kwargs.get("type", None) == "book"
