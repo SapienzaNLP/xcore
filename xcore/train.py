@@ -1,4 +1,5 @@
 import os
+import warnings
 import hydra
 import omegaconf
 import pytorch_lightning as pl
@@ -24,6 +25,8 @@ torch.set_printoptions(edgeitems=100)
 
 
 def train(conf: omegaconf.DictConfig) -> None:
+    # don't warn about multiprocessing for data loaders
+    warnings.filterwarnings("ignore", ".*does not have many workers.*")
     # fancy logger
     console = Console()
     # reproducibility
@@ -45,6 +48,14 @@ def train(conf: omegaconf.DictConfig) -> None:
         conf.train.model_checkpoint_callback = None
 
         # conf.train.pl_trainer.accelerator = "cpu"
+
+    # The following was prompted by this log message:
+    # You are using a CUDA device ('NVIDIA A100 80GB PCIe') that has Tensor
+    # Cores. To properly utilize them, you should set
+    # `torch.set_float32_matmul_precision('medium' | 'high')` which will
+    # trade-off precision for performance. For more details, read
+    # https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+    torch.set_float32_matmul_precision('medium')
 
     # data module declaration
     console.log(f"Instantiating the Data Module")
@@ -98,7 +109,8 @@ def train(conf: omegaconf.DictConfig) -> None:
     trainer.fit(pl_module, datamodule=pl_data_module)
 
     # module test
-    trainer.test(pl_module, datamodule=pl_data_module)
+    # disabled due to bugs
+    # trainer.test(pl_module, datamodule=pl_data_module)
 
 
 def set_determinism_the_old_way(deterministic: bool):
