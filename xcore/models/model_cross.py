@@ -20,12 +20,12 @@ from transformers import (
             )
 
 class attention(torch.nn.Module):
-    def __init__(self, model, representation):
+    def __init__(self, model, representation, input_dim):
         super().__init__()
         self.model = model
         self.t = RepresentationLayer(
             type="FC",  # fullyconnected
-            input_dim=2048,
+            input_dim=input_dim,
             output_dim=768,
             hidden_dim=1024,
         )
@@ -45,9 +45,13 @@ class xCoRe_system(torch.nn.Module):
         super().__init__()
         # document transformer encoder
         self.encoder_hf_model_name = kwargs["huggingface_model_name"]
-        self.encoder = AutoModel.from_pretrained(self.encoder_hf_model_name)
+        self.encoder = AutoModel.from_pretrained(self.encoder_hf_model_name).train()
         self.encoder_config = AutoConfig.from_pretrained(self.encoder_hf_model_name)
-        self.encoder.resize_token_embeddings(self.encoder.embeddings.word_embeddings.num_embeddings + 3)
+        try:
+            num_embeddings = self.encoder.embeddings.word_embeddings.num_embeddings
+        except AttributeError:
+            num_embeddings = self.encoder.embeddings.tok_embeddings.num_embeddings
+        self.encoder.resize_token_embeddings(num_embeddings + 3)
         self.device = self.encoder.device
 
         # freeze
@@ -187,7 +191,7 @@ class xCoRe_system(torch.nn.Module):
         self.cluster_model = DistilBertModel(self.cluster_model_config).to(self.encoder.device)
         self.cluster_model.transformer.layer = self.cluster_model.transformer.layer[: self.cluster_model_num_layers]
         self.cluster_model.embeddings.word_embeddings = None
-        self.cluster_transformer = attention(model=self.cluster_model, representation=self.cluster_representation)
+        self.cluster_transformer = attention(model=self.cluster_model, representation=self.cluster_representation, input_dim=self.mention_hidden_size)
 
         self.antecedent_coref_classifier = RepresentationLayer(
                 type=self.representation_layer_type,  # fullyconnected

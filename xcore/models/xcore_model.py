@@ -36,7 +36,7 @@ class xCoRe:
         return path
 
     def __get_model_tokenizer__(self):
-        tokenizer = AutoTokenizer.from_pretrained(self.model.encoder_hf_model_name, use_fast=True, add_prefix_space=True)
+        tokenizer = AutoTokenizer.from_pretrained(self.model.encoder_hf_model_name, use_fast=False, add_prefix_space=True)
         special_tokens_dict = {"additional_special_tokens": ["[SPEAKER_START]", "[SPEAKER_END]"]}
         tokenizer.add_special_tokens(special_tokens_dict)
         return tokenizer
