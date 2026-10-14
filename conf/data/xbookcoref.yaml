@@ -1,8 +1,8 @@
 datamodule:
-  _target_: data.pl_data_modules.CrossDataModule
+  _target_: xcore.data.pl_data_modules.CrossDataModule
   dataset:
     train:
-      _target_: data.datasets.xcoreDataset
+      _target_: xcore.data.datasets.xcoreDataset
       name: 'train'
       type: "book"
       path: 'data/long/book/bookcoref/train/silver_train_simple_mes_hierarchical_splitted_1350_rateo.jsonlines'
@@ -11,7 +11,7 @@ datamodule:
       tokenizer: "${model.module.model.huggingface_model_name}"
       max_doc_len: 1550
     val:
-      _target_: data.datasets.xcoreDataset
+      _target_: xcore.data.datasets.xcoreDataset
       name: 'val'
       type: "book"
       split: 4000
@@ -20,7 +20,7 @@ datamodule:
       processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/val'
       tokenizer: "${model.module.model.huggingface_model_name}"
     test:
-      _target_: data.datasets.xcoreDataset
+      _target_: xcore.data.datasets.xcoreDataset
       name: 'test'
       type: "book"
       split: 4000

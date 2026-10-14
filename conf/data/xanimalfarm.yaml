@@ -1,0 +1,39 @@
+datamodule:
+  _target_: xcore.data.pl_data_modules.CrossDataModule
+  dataset:
+    train:
+      _target_: xcore.data.datasets.xcoreDataset
+      name: 'train'
+      type: "book"
+      path: 'data/LitBank/train-splitted.english.jsonlines'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/animalfarm/train'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+      max_doc_len: 1770
+    val:
+      _target_: xcore.data.datasets.xcoreDataset
+      name: 'val'
+      type: "book"
+      path: 'data/long/animalfarm/dev.jsonlines'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/animalfarm/val'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+    test:
+      _target_: xcore.data.datasets.xcoreDataset
+      name: 'test'
+      type: "book"
+      split: 2
+      path: 'data/long/animalfarm/test.jsonlines'
+      batch_size: "${data.datamodule.batch_sizes.train}"
+      processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/animalfarm/test'
+      tokenizer: "${model.module.model.huggingface_model_name}"
+
+  batch_sizes:
+    train: 1
+    val: 1
+    test: 1
+
+  num_workers:
+    train: 0
+    val: 0
+    test: 0

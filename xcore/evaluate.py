@@ -6,8 +6,8 @@ from omegaconf import omegaconf
 from xcore.common.util import *
 from xcore.common.metrics import *
 from tqdm import tqdm
-from data.pl_data_modules import CrossDataModule
-from models.pl_modules import CrossPLModule
+from xcore.data.pl_data_modules import CrossDataModule
+from xcore.models.pl_modules import CrossPLModule
 from xcore.utils.loggingl import get_console_logger
 
 logger = get_console_logger()
@@ -44,7 +44,17 @@ def evaluate(conf: omegaconf.DictConfig):
     jsonlines_to_html(pl_data_module.test_dataloader().dataset.path, "test")
 
     logger.log(f"Instantiating the Model from {conf.evaluation.checkpoint}")
-    model = CrossPLModule.load_from_checkpoint(conf.evaluation.checkpoint, _recursive_=False, map_location=device)
+    # PyTorch >=2.6 changed weights_only default to True, which blocks PL checkpoints
+    # that contain non-tensor globals. Patch torch.load locally for this trusted file.
+    _orig_load = torch.load
+    def _load_unsafe(*args, **kwargs):
+        kwargs["weights_only"] = False
+        return _orig_load(*args, **kwargs)
+    try:
+        torch.load = _load_unsafe
+        model = CrossPLModule.load_from_checkpoint(conf.evaluation.checkpoint, _recursive_=False, map_location=device)
+    finally:
+        torch.load = _orig_load
     gold = []
     info = []
     with open(hydra.utils.get_original_cwd() + "/" + pl_data_module.test_dataloader().dataset.path, "r") as f:

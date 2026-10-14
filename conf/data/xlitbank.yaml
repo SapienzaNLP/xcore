@@ -1,5 +1,5 @@
 datamodule:
-  _target_: data.pl_data_modules.CrossDataModule
+  _target_: xcore.data.pl_data_modules.CrossDataModule
   dataset:
     train:
       _target_: xcore.data.datasets.xcoreDataset

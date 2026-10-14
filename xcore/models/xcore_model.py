@@ -6,6 +6,7 @@ from transformers import AutoTokenizer
 from xcore.models.pl_modules import CrossPLModule
 from xcore.common.util import *
 from xcore.common.constants import *
+from xcore.common.tokenization import encode_words
 from xcore.models import *
 
 from transformers.utils.hub import cached_file as hf_cached_file
@@ -14,12 +15,18 @@ class xCoRe:
     def __init__(self, hf_name_or_path="sapienzanlp/xcore-litbank", device="cuda"):
         self.device = device
         path = self.__get_model_path__(hf_name_or_path)
-        _original_torch_load = torch.load
-        torch.load = lambda *args, **kwargs: _original_torch_load(*args, **{**kwargs, "weights_only": False})
+        # PyTorch >=2.6 changed weights_only default to True, which blocks PL checkpoints
+        # that contain non-tensor globals (AttributeDict, DictConfig, etc.). Patch torch.load
+        # locally so the checkpoint loads with weights_only=False for this trusted file.
+        _orig_load = torch.load
+        def _load_unsafe(*args, **kwargs):
+            kwargs["weights_only"] = False
+            return _orig_load(*args, **kwargs)
         try:
+            torch.load = _load_unsafe
             self.model = CrossPLModule.load_from_checkpoint(path, _recursive_=False, map_location=self.device)
         finally:
-            torch.load = _original_torch_load
+            torch.load = _orig_load
         # self.model = CrossPLModule.load_from_checkpoint(hf_name_or_path, _recursive_=False, map_location=device)
         self.model = self.model.eval()
         self.model = self.model.model
@@ -195,8 +202,7 @@ class xCoRe:
             new_token_map.append(idx)
             new_tokens.append(token)
 
-        encoded_text = self.tokenizer(new_tokens, add_special_tokens=True, is_split_into_words=True)
-        
+        encoded_text = encode_words(self.tokenizer, new_tokens)
 
         eos_indices = [
             encoded_text.word_to_tokens(token_to_new_token_map[eos - 1]).start

@@ -11,6 +11,7 @@ from datasets import load_from_disk
 from datasets import Dataset as dt
 import random
 import xcore.common.util as util
+from xcore.common.tokenization import encode_words, wraps_with_cls_sep
 
 NULL_ID_FOR_COREF = -1
 
@@ -44,12 +45,22 @@ class xcoreDataset(Dataset):
             self.set = self.set.remove_columns(column_names=["speakers"])
             if self.stage != "test":
                 self.set.save_to_disk(hydra.utils.get_original_cwd() + "/" + processed_dataset_path + "_" + type + "/")
+        # Caches built with transformers 5.0-5.3 lack [CLS]/[SEP], which shifts every offset by one.
+        if (
+            len(self.set) > 0
+            and wraps_with_cls_sep(self.tokenizer)
+            and self.set[0]["input_ids"][0] != self.tokenizer.cls_token_id
+        ):
+            raise RuntimeError(
+                f"Processed dataset in {processed_dataset_path}_{type}/ was tokenized without [CLS]/[SEP]; "
+                "delete it and rerun to rebuild it."
+            )
 
     def prepare_data(self, set):
         return set.filter(lambda x: len(self.tokenizer(x["tokens"])["input_ids"]) <= self.max_doc_len)
 
     def cut_document_to_length(self, set_element):
-        encoded_text = self.tokenizer(set_element["tokens"], add_special_tokens=True, is_split_into_words=True)
+        encoded_text = encode_words(self.tokenizer, set_element["tokens"])
         if len(encoded_text["input_ids"]) <= self.max_doc_len + 1:
             result = set_element
         else:
@@ -91,7 +102,7 @@ class xcoreDataset(Dataset):
         for cluster in clusters:
             for start, end in cluster:
                 assert tokens[start : end + 1] == new_tokens[token_to_new_token_map[start] : token_to_new_token_map[end] + 1]
-        encoded_text = self.tokenizer(new_tokens, add_special_tokens=True, is_split_into_words=True)
+        encoded_text = encode_words(self.tokenizer, new_tokens)
 
         clusters = [
             [

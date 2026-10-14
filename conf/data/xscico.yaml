@@ -1,8 +1,8 @@
 datamodule:
-  _target_: data.pl_data_modules.CrossDataModule
+  _target_: xcore.data.pl_data_modules.CrossDataModule
   dataset:
     train:
-      _target_: data.datasets.xcoreDataset
+      _target_: xcore.data.datasets.xcoreDataset
       name: 'train'
       type: "cross"
       path: 'data/cross/scico/train_nosingletons.jsonl'
@@ -11,7 +11,7 @@ datamodule:
       tokenizer: "${model.module.model.huggingface_model_name}"
       max_doc_len: 4500 
     val:
-      _target_: data.datasets.xcoreDataset
+      _target_: xcore.data.datasets.xcoreDataset
       name: 'val'
       type: "cross"
       path: 'data/cross/scico/validation_nosingletons.jsonl'
@@ -19,7 +19,7 @@ datamodule:
       processed_dataset_path: 'data/cache_${data.datamodule.dataset.train.max_doc_len}/${model.module.model.huggingface_model_name}/ontonotes/val'
       tokenizer: "${model.module.model.huggingface_model_name}"
     test:
-      _target_: data.datasets.xcoreDataset
+      _target_: xcore.data.datasets.xcoreDataset
       name: 'test'
       type: "cross"
       path: 'data/cross/scico/test.jsonl' #test_nosingletons is broken

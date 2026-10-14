@@ -1,5 +1,5 @@
 module:
-  _target_: models.pl_modules.CrossPLModule
+  _target_: xcore.models.pl_modules.CrossPLModule
   RAdam:
     _target_: torch.optim.RAdam
     lr: 2e-5
@@ -9,12 +9,12 @@ module:
     weight_decay: 0.01
     scale_parameter: False
     relative_step: False
-  lr_scheduler:     
-    num_warmup_steps: 10
-    num_training_steps: 10000
+  lr_scheduler:
+    num_warmup_steps: 8000
+    num_training_steps: 80000
   opt: "Adafactor" #RAdam
   model:
-    _target_: models.model_cross.xCoRe_system
+    _target_: xcore.models.model_cross.xCoRe_system
     language_model: "deberta-v3-large"
     huggingface_model_name: "microsoft/deberta-v3-large"
     freeze_encoder: False
